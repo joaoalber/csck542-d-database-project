@@ -1,1 +1,1 @@
-# csck542-d-database-project
+# University of Liverpool - Database Project
