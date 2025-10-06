@@ -1,3 +1,4 @@
+Create database University;
 
 USE University;
 
