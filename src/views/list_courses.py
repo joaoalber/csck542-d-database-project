@@ -1,8 +1,17 @@
-    import tkinter as tk
+import tkinter as tk
+
+import os, sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+
+from src.entities.course import Course
 
 def search():
-    query = entry.get()
-    print(f"Searching courses for: {query}")
+    query = entry.get().lower()
+    listbox.delete(0, tk.END)
+
+    for course in all_courses:
+        if query in (course.name or "").lower():
+            listbox.insert("end", course.name)
 
 root = tk.Tk()
 root.title("Courses")
@@ -30,7 +39,8 @@ frame_main.pack(side="left", fill="both", expand=True)
 listbox = tk.Listbox(frame_main)
 listbox.pack(fill="both", expand=True, padx=5, pady=5)
 
-for i in range(15):
-    listbox.insert("end", f"Course {i+1}")
+all_courses = Course.all()
+for course in all_courses:
+    listbox.insert("end", course.name)
 
 root.mainloop()

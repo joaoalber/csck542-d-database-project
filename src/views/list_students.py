@@ -1,5 +1,10 @@
 import tkinter as tk
 
+import os, sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+
+from src.entities.student import Student
+
 def search():
     query = entry.get()
     print(f"Searching students for: {query}")
@@ -30,7 +35,9 @@ frame_main.pack(side="left", fill="both", expand=True)
 listbox = tk.Listbox(frame_main)
 listbox.pack(fill="both", expand=True, padx=5, pady=5)
 
-for i in range(20):
-    listbox.insert("end", f"Student {i+1}")
+all_students = Student.all()
+for student in all_students:
+    display_text = f"{student.name} ({student.contact_info})"
+    listbox.insert("end", display_text)
 
 root.mainloop()
