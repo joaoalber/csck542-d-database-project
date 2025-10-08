@@ -2,10 +2,10 @@ import tkinter as tk
 
 def search():
     query = entry.get()
-    print(f"Searching courses for: {query}")
+    print(f"Searching students for: {query}")
 
 root = tk.Tk()
-root.title("Courses")
+root.title("Students")
 root.geometry("600x400")
 
 frame_top = tk.Frame(root)
@@ -20,9 +20,9 @@ btn_search.pack(side="left")
 frame_left = tk.Frame(root, width=150)
 frame_left.pack(side="left", fill="y")
 
-tk.Button(frame_left, text="Filter X").pack(pady=5, padx=5)
-tk.Button(frame_left, text="Filter Y").pack(pady=5, padx=5)
-tk.Button(frame_left, text="Filter Z").pack(pady=5, padx=5)
+tk.Button(frame_left, text="Filter 1").pack(pady=5, padx=5)
+tk.Button(frame_left, text="Filter 2").pack(pady=5, padx=5)
+tk.Button(frame_left, text="Filter 3").pack(pady=5, padx=5)
 
 frame_main = tk.Frame(root)
 frame_main.pack(side="left", fill="both", expand=True)
@@ -30,7 +30,7 @@ frame_main.pack(side="left", fill="both", expand=True)
 listbox = tk.Listbox(frame_main)
 listbox.pack(fill="both", expand=True, padx=5, pady=5)
 
-for i in range(15):
-    listbox.insert("end", f"Course {i+1}")
+for i in range(20):
+    listbox.insert("end", f"Student {i+1}")
 
 root.mainloop()
