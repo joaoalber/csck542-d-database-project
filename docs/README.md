@@ -1,32 +1,33 @@
 # University of Liverpool - Database Project
 
-This project was built for helping users to manage academic operations.
+This project was built for helping users to manage academic operations
 
 ## Setup
 
 ### Initializing the database
 
-This project is using MySQL for managing the data.
+This project is using MySQL for managing the data
 
-Before running this project you should initialize the database properly.
+Before running this project you should initialize the database properly
 
 1. Install **MySQL Workbench** and **MySQL server**
 2. Ensure your MySQL server is running properly on **port 3306**
 
 ### Executing the SQL scripts
 
-In db/ there are two scripts that must be run on MySQL Workbench.
+In db/ there are two scripts that must be run on MySQL Workbench
 
 Open MySQL Workbench and click on `File > Run SQL Script`:
 
 ![alt text](image.png)
 
 Select the file `db/University.sql` - this will run the script
+
 Then, after running the 1st script you can do the same for `db/Seed.sql`
 
-PS: If you can't run the SQL directly, you can also click on `Open SQL Script` and run each of them manually through the UI
+PS: If you can't run it, you can also click on `Open SQL Script` and run each of them manually through the UI
 
-Now your database is properly initialized and with enough data to run the project.
+Now your database is properly initialized and with enough data to run the project
 
 ### Running the code
 
