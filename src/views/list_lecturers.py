@@ -17,10 +17,10 @@ frame_top = tk.Frame(root)
 frame_top.pack(side="top", fill="x", pady=5)
 
 entry = tk.Entry(frame_top, width=40)
-entry.pack(side="left", padx=5)
+entry.pack(side="left", padx=5, fill='x', expand=True)
 
 btn_search = tk.Button(frame_top, text="Search", command=search)
-btn_search.pack(side="left")
+btn_search.pack(side="left", padx=5)
 
 frame_left = tk.Frame(root, width=150)
 frame_left.pack(side="left", fill="y")
