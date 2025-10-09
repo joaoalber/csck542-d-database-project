@@ -1,4 +1,8 @@
-Create database University;
+CREATE USER IF NOT EXISTS 'dev_user'@'localhost' IDENTIFIED BY '123456';
+ALTER USER 'dev_user'@'localhost' IDENTIFIED WITH mysql_native_password BY '123456';
+CREATE DATABASE IF NOT EXISTS University;
+GRANT ALL PRIVILEGES ON University.* TO 'dev_user'@'localhost';
+FLUSH PRIVILEGES;
 
 USE University;
 
@@ -104,7 +108,7 @@ CREATE TABLE ENROLLMENT (
     student_id INT,
     course_code VARCHAR(20),
     status VARCHAR(50),
-    final_grade VARCHAR(5),
+    final_grade INT,
     FOREIGN KEY (student_id) REFERENCES STUDENT(student_id),
     FOREIGN KEY (course_code) REFERENCES COURSE(course_code)
 );

@@ -33,21 +33,24 @@ INSERT INTO RESEARCH_PROJECT (project_id, title, pi_lecturer_id, funding_sources
 INSERT INTO COURSE (course_code, name, description, dept_id, level, credits, lecturer_id, status, schedule) VALUES
 ('CS101','Intro to Programming','Basics of Python',1,1,3,1,'Active','Sun 10:00'),
 ('CS205','Databases','Relational design',1,2,3,2,'Active','Mon 12:00'),
-('IS210','Systems Analysis','Methods & tools',2,2,3,3,'Active','Tue 14:00');
+('IS210','Systems Analysis','Methods & tools',2,2,3,3,'Active','Tue 14:00'),
+('CS302','Programming Logic','Basics of logic',1,2,3,1,'Active','Mon 13:00');
 
 # STUDENTS 
 INSERT INTO STUDENT (student_id, name, dob, contact_info, program_id, year_of_study,
                      graduation_status, advisor_id, org_id) VALUES
 (1,'Alya AlKetbi','2001-05-10','alya@example.edu',3,2,'In Progress',1,1),
 (2,'Mizna AlMansoori','2000-02-20','mizna@example.edu',1,4,'Eligible',2,2),
-(3,'Hamad AlMarri','2002-09-01','hamad@example.edu',1,4,'In Progress',1,1);
+(3,'Hamad AlMarri','2002-09-01','hamad@example.edu',1,4,'In Progress',1,1),
+(4,'João Rossi','2001-02-01','joao@example.edu',NULL,NULL,NULL,NULL,NULL),
+(5,'Alyan Tremb','2000-03-01','alyan@example.edu',NULL,NULL,NULL,NULL,NULL);
 
 # ENROLLMENTS 
 INSERT INTO ENROLLMENT (enrollment_id, student_id, course_code, status, final_grade) VALUES
 (1,1,'CS101','Enrolled',NULL),
 (2,1,'CS205','Enrolled',NULL),
-(3,2,'CS205','Completed','B'),
-(4,2,'IS210','Completed','A'),
+(3,2,'CS205','Completed',75),
+(4,2,'IS210','Completed',65),
 (5,3,'CS205','Enrolled',NULL);
 
 # ASSESSMENT STRUCTURE

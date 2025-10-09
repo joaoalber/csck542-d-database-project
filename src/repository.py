@@ -4,7 +4,7 @@ class MySQLRepository:
     def __init__(self):
         self.conn = pymysql.connect(
             host="127.0.0.1",
-            user="root",
+            user="dev_user",
             password="123456",
             database="university",
             cursorclass=pymysql.cursors.DictCursor  # optional but useful
