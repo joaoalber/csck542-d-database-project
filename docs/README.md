@@ -6,7 +6,7 @@ This project was built for helping users to manage academic operations.
 
 ### Initializing the database
 
-This project was built by using MySQL for managingt the Database.
+This project is using MySQL for managing the data.
 
 Before running this project you should initialize the database properly.
 
