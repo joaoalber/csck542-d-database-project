@@ -30,7 +30,7 @@ class LecturersApp(tk.Tk):
         DEFAULT_W, DEFAULT_H = 900, 600
         self.minsize(720, 480)
         center_on_screen(self, DEFAULT_W, DEFAULT_H)
-        # self.state("zoomed")  # <- uncomment if you want to start maximized
+        
 
         # grid weights for resize
         self.rowconfigure(1, weight=1)
