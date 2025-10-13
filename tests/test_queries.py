@@ -58,7 +58,7 @@ def main():
     """
     rows2 = run(sql2)
     show("Q2: final-year avg > 70%", rows2)
-    # 🔧 Fixed: include Hamad (id 3) who has ~74.67%
+    
     assert_rows_as_set(rows2, ("student_id", "name"),
                        {(2, "Mizna AlMansoori"), (3, "Hamad AlMarri")})
 
