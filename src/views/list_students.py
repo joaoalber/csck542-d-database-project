@@ -30,7 +30,7 @@ class StudentsApp(tk.Tk):
         DEFAULT_W, DEFAULT_H = 900, 600
         self.minsize(720, 480)
         center_on_screen(self, DEFAULT_W, DEFAULT_H)
-        # self.state("zoomed")  # <- uncomment to start maximized
+        
 
         self.rowconfigure(1, weight=1)
         self.columnconfigure(0, weight=1)
@@ -112,7 +112,7 @@ class StudentsApp(tk.Tk):
 
     def _load_top_students(self) -> None:
         self._clear()
-        # expected from your entity: list of dicts with keys: name, final_grade
+        
         data = Student.top_completed_students()
         rows = [{"name": r["name"], "contact": "", "extra": f"Final grade: {r['final_grade']}"} for r in data]
         if not rows:
@@ -121,7 +121,7 @@ class StudentsApp(tk.Tk):
 
     def _load_not_enrolled(self) -> None:
         self._clear()
-        # expected from your entity: list of dicts with key 'name'
+        
         data = Student.not_enrolled_yet()
         rows = [{"name": r["name"], "contact": "", "extra": "Not enrolled"} for r in data]
         if not rows:
