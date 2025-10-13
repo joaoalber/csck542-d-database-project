@@ -9,7 +9,7 @@ THIS_DIR = Path(__file__).resolve().parent
 SRC_DIR = THIS_DIR.parent
 PROJECT_ROOT = SRC_DIR.parent
 
-# Ensure both repo root and src are on sys.path
+
 for p in (str(PROJECT_ROOT), str(SRC_DIR)):
     if p not in sys.path:
         sys.path.insert(0, p)
@@ -38,7 +38,7 @@ class CoursesApp(tk.Tk):
         self.minsize(720, 480)
         center_on_screen(self, DEFAULT_W, DEFAULT_H)
 
-        # Make main area expandable
+        
         self.rowconfigure(1, weight=1)
         self.columnconfigure(0, weight=1)
 
@@ -46,7 +46,7 @@ class CoursesApp(tk.Tk):
         self._load_all()
 
     def _build_ui(self) -> None:
-        # Try a neutral ttk theme
+        
         style = ttk.Style(self)
         try:
             style.theme_use("clam")
@@ -107,7 +107,7 @@ class CoursesApp(tk.Tk):
         self.tree.configure(yscrollcommand=yscroll.set)
         yscroll.grid(row=0, column=1, sticky="ns")
 
-        # Double-click to view details
+        
         self.tree.bind("<Double-1>", self._on_open_row)
 
     def _clear(self) -> None:
