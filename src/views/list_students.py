@@ -1,98 +1,153 @@
-import tkinter as tk
 
-import os, sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+import sys
+from pathlib import Path
+import tkinter as tk
+from tkinter import ttk, messagebox
+
+THIS_DIR = Path(__file__).resolve().parent
+SRC_DIR = THIS_DIR.parent
+PROJECT_ROOT = SRC_DIR.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.entities.student import Student
 
-def search():
-    query = entry.get().strip()
-    listbox.delete(0, tk.END)
 
-    if not query:
-        listbox.insert("end", "Please enter a search term.")
-        return []
+def center_on_screen(win: tk.Tk, width: int, height: int) -> None:
+    win.update_idletasks()
+    sw, sh = win.winfo_screenwidth(), win.winfo_screenheight()
+    x = (sw - width) // 2
+    y = (sh - height) // 5
+    win.geometry(f"{width}x{height}+{x}+{y}")
 
-    students = Student.search(query)
 
-    if not students:
-        listbox.insert("end", f"No students found for '{query}'.")
-        return []
+class StudentsApp(tk.Tk):
+    def __init__(self) -> None:
+        super().__init__()
+        self.title("Students")
 
-    for student in students:
-        display_text = f"{student.name} ({student.contact_info})"
-        listbox.insert("end", display_text)
+        # Window sizing & responsiveness
+        DEFAULT_W, DEFAULT_H = 900, 600
+        self.minsize(720, 480)
+        center_on_screen(self, DEFAULT_W, DEFAULT_H)
+        # self.state("zoomed")  # <- uncomment to start maximized
 
-    return students
+        self.rowconfigure(1, weight=1)
+        self.columnconfigure(0, weight=1)
 
-def filter_top_students():
-    students = Student.top_completed_students()
-    listbox.delete(0, tk.END)
+        self._build_ui()
+        self._load_all()
 
-    if not students:
-        listbox.insert("end", "No students found with the given criteria.")
-        return []
+    def _build_ui(self) -> None:
+        # Top search bar
+        top = ttk.Frame(self, padding=(10, 10, 10, 0))
+        top.grid(row=0, column=0, sticky="ew")
+        top.columnconfigure(1, weight=1)
 
-    for student in students:
-        display_text = f"{student['name']} - Final Grade: {student['final_grade']}"
-        listbox.insert("end", display_text)
+        ttk.Label(top, text="Search:").grid(row=0, column=0, sticky="w", padx=(0, 6))
+        self.search_var = tk.StringVar()
+        self.search_entry = ttk.Entry(top, textvariable=self.search_var)
+        self.search_entry.grid(row=0, column=1, sticky="ew")
+        ttk.Button(top, text="Search", command=self._on_search).grid(row=0, column=2, padx=(8, 0))
 
-    return students
+        # Main area: sidebar + table
+        main = ttk.Frame(self, padding=10)
+        main.grid(row=1, column=0, sticky="nsew")
+        main.rowconfigure(0, weight=1)
+        main.columnconfigure(1, weight=1)
 
-def filter_not_enrolled_students():
-    students = Student.not_enrolled_yet()
-    listbox.delete(0, tk.END)
+        # Sidebar filters
+        side = ttk.Frame(main)
+        side.grid(row=0, column=0, sticky="ns", padx=(0, 10))
+        ttk.Label(side, text="Filters", style="Headline.TLabel").grid(row=0, column=0, pady=(0, 8))
+        ttk.Button(side, text="All students", width=22, command=self._load_all).grid(row=1, column=0, pady=3, sticky="ew")
+        ttk.Button(side, text="High-rated (completed)", width=22, command=self._load_top_students).grid(row=2, column=0, pady=3, sticky="ew")
+        ttk.Button(side, text="Not enrolled yet", width=22, command=self._load_not_enrolled).grid(row=3, column=0, pady=3, sticky="ew")
 
-    if not students:
-        listbox.insert("end", "No students found with the given criteria.")
-        return []
+        # Table
+        table_frame = ttk.Frame(main)
+        table_frame.grid(row=0, column=1, sticky="nsew")
+        table_frame.rowconfigure(0, weight=1)
+        table_frame.columnconfigure(0, weight=1)
 
-    for student in students:
-        display_text = f"{student['name']}"
-        listbox.insert("end", display_text)
+        cols = ("name", "contact", "extra")
+        self.tree = ttk.Treeview(table_frame, columns=cols, show="headings", selectmode="browse")
+        self.tree.grid(row=0, column=0, sticky="nsew")
 
-    return students
+        self.tree.heading("name", text="Name")
+        self.tree.heading("contact", text="Contact")
+        self.tree.heading("extra", text="Details")
 
-def all_students():
-    students = Student.all()
-    listbox.delete(0, tk.END)
+        self.tree.column("name", width=300, anchor="w", stretch=True)
+        self.tree.column("contact", width=320, anchor="w", stretch=True)
+        self.tree.column("extra", width=220, anchor="w", stretch=False)
 
-    if not students:
-        listbox.insert("end", "No students found with the given criteria.")
-        return []
+        yscroll = ttk.Scrollbar(table_frame, orient="vertical", command=self.tree.yview)
+        self.tree.configure(yscrollcommand=yscroll.set)
+        yscroll.grid(row=0, column=1, sticky="ns")
 
-    for student in students:
-        display_text = f"{student.name} ({student.contact_info})"
-        listbox.insert("end", display_text)
+        self.tree.bind("<Double-1>", self._on_open_student)
 
-    return students
+        # Style polish
+        style = ttk.Style(self)
+        try:
+            style.theme_use("clam")
+        except tk.TclError:
+            pass
+        style.configure("Headline.TLabel", font=("Segoe UI", 10, "bold"))
 
-root = tk.Tk()
-root.title("Students")
-root.geometry("600x400")
+    def _clear(self) -> None:
+        for iid in self.tree.get_children():
+            self.tree.delete(iid)
 
-frame_top = tk.Frame(root)
-frame_top.pack(side="top", fill="x", pady=5)
+    def _insert_rows(self, rows) -> None:
+        """Rows shaped like {'name','contact','extra'}."""
+        for r in rows:
+            self.tree.insert("", "end", values=(r.get("name"), r.get("contact"), r.get("extra", "")))
 
-entry = tk.Entry(frame_top, width=40)
-entry.pack(side="left", padx=5, fill='x', expand=True)
+    def _load_all(self) -> None:
+        self._clear()
+        data = [{"name": s.name, "contact": s.contact_info, "extra": ""} for s in Student.all()]
+        self._insert_rows(data)
 
-btn_search = tk.Button(frame_top, text="Search", command=search)
-btn_search.pack(side="left", padx=5)
+    def _load_top_students(self) -> None:
+        self._clear()
+        # expected from your entity: list of dicts with keys: name, final_grade
+        data = Student.top_completed_students()
+        rows = [{"name": r["name"], "contact": "", "extra": f"Final grade: {r['final_grade']}"} for r in data]
+        if not rows:
+            messagebox.showinfo("Top students", "No students match this filter.", parent=self)
+        self._insert_rows(rows)
 
-frame_left = tk.Frame(root, width=150)
-frame_left.pack(side="left", fill="y")
+    def _load_not_enrolled(self) -> None:
+        self._clear()
+        # expected from your entity: list of dicts with key 'name'
+        data = Student.not_enrolled_yet()
+        rows = [{"name": r["name"], "contact": "", "extra": "Not enrolled"} for r in data]
+        if not rows:
+            messagebox.showinfo("Not enrolled", "No students match this filter.", parent=self)
+        self._insert_rows(rows)
 
-tk.Button(frame_left, text="High-rated students", command=filter_top_students).pack(pady=5, padx=5, fill='x')
-tk.Button(frame_left, text="Not enrolled yet", command=filter_not_enrolled_students).pack(pady=5, padx=5, fill='x')
-tk.Button(frame_left, text="All students", command=all_students).pack(pady=5, padx=5, fill='x')
+    def _on_search(self) -> None:
+        term = (self.search_var.get() or "").strip()
+        if not term:
+            self._load_all()
+            return
+        self._clear()
+        matches = Student.search(term)  # list of Student objs
+        rows = [{"name": s.name, "contact": s.contact_info, "extra": ""} for s in matches]
+        if not rows:
+            messagebox.showinfo("Search", f"No students found for '{term}'.", parent=self)
+        self._insert_rows(rows)
 
-frame_main = tk.Frame(root)
-frame_main.pack(side="left", fill="both", expand=True)
+    def _on_open_student(self, _evt=None) -> None:
+        cur = self.tree.focus()
+        if not cur:
+            return
+        name, contact, extra = self.tree.item(cur, "values")
+        messagebox.showinfo("Student", f"Name: {name}\nContact: {contact or '—'}\n{extra}", parent=self)
 
-listbox = tk.Listbox(frame_main)
-listbox.pack(fill="both", expand=True, padx=5, pady=5)
 
-all_students()
-
-root.mainloop()
+if __name__ == "__main__":
+    app = StudentsApp()
+    app.mainloop()

@@ -1,1 +1,64 @@
 PyMySQL
+>>> C:\Users\techno axis\PycharmProjects\csck542-d-database-project\.venv\Scripts\python.exe C:\Users\techno axis\PycharmProjects\csck542-d-database-project\tests\smoke_db.py
+Connected to: university
+Tables found: 17
+['committee', 'course', 'department', 'disciplinary_record', 'enrollment', 'expertise', 'grade_item', 'grade_result', 'lecturer', 'non_acad_staff', 'program', 'publication', 'qualification', 'research_group', 'research_project', 'student', 'student_org']
+
+>>> C:\Users\techno axis\PycharmProjects\csck542-d-database-project\.venv\Scripts\python.exe C:\Users\techno axis\PycharmProjects\csck542-d-database-project\tests\test_queries.py
+Connected to DB: university
+
+=== Q1: students in CS205 taught by Dr. Omar ===
+[{'name': 'Alya AlKetbi', 'student_id': 1},
+ {'name': 'Mizna AlMansoori', 'student_id': 2},
+ {'name': 'Hamad AlMarri', 'student_id': 3}]
+
+=== Q2: final-year avg > 70% ===
+[{'avg_score': Decimal('82.67'), 'name': 'Mizna AlMansoori', 'student_id': 2},
+ {'avg_score': Decimal('74.67'), 'name': 'Hamad AlMarri', 'student_id': 3}]
+
+=== Q3: students with no enrollments ===
+[{'name': 'João Rossi', 'student_id': 4},
+ {'name': 'Alyan Tremb', 'student_id': 5}]
+
+=== Q4: advisor for Alya ===
+[{'advisor': 'Dr. Aisha', 'student': 'Alya AlKetbi'}]
+
+=== Q5: lecturers with 'ML' expertise ===
+[{'lecturer_id': 1, 'name': 'Dr. Aisha'}]
+
+=== Q6: courses taught by CS dept lecturers ===
+[{'course_code': 'CS101', 'name': 'Intro to Programming'},
+ {'course_code': 'CS205', 'name': 'Databases'},
+ {'course_code': 'CS302', 'name': 'Programming Logic'}]
+
+=== Q7: lecturers with most supervised projects ===
+[{'lecturer_id': 1, 'n': 1, 'name': 'Dr. Aisha'},
+ {'lecturer_id': 2, 'n': 1, 'name': 'Dr. Omar'}]
+
+✅ All query tests passed.
+
+>>> C:\Users\techno axis\PycharmProjects\csck542-d-database-project\.venv\Scripts\python.exe C:\Users\techno axis\PycharmProjects\csck542-d-database-project\tests\test_negative.py
+
+[TEST] Duplicate PK in STUDENT (student_id=1 already exists)
+✅ PASSED (IntegrityError)
+   → (1062, "Duplicate entry '1' for key 'PRIMARY'")
+
+[TEST] FK violation: ENROLLMENT.student_id → STUDENT(student_id)
+✅ PASSED (IntegrityError)
+   → (1452, 'Cannot add or update a child row: a foreign key constraint fails (`university`.`enrollment`, CONSTRAINT `enrollment_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`))')
+
+[TEST] FK violation: ENROLLMENT.course_code → COURSE(course_code)
+✅ PASSED (IntegrityError)
+   → (1452, 'Cannot add or update a child row: a foreign key constraint fails (`university`.`enrollment`, CONSTRAINT `enrollment_ibfk_2` FOREIGN KEY (`course_code`) REFERENCES `course` (`course_code`))')
+
+[TEST] FK violation: GRADE_RESULT.enrollment_id → ENROLLMENT(enrollment_id)
+✅ PASSED (IntegrityError)
+   → (1452, 'Cannot add or update a child row: a foreign key constraint fails (`university`.`grade_result`, CONSTRAINT `grade_result_ibfk_2` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollment` (`enrollment_id`))')
+
+[TEST] NOT NULL/PK violation: COURSE.course_code cannot be NULL
+✅ PASSED (IntegrityError)
+   → (1048, "Column 'course_code' cannot be null")
+
+✅ All tests completed successfully.
+
+Process finished with exit code 0
