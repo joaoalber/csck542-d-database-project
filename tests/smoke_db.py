@@ -3,9 +3,9 @@ import pymysql
 
 CONN = dict(
     host="127.0.0.1",
-    port=3306,              # 3306 per your XAMPP screen
-    user="root",            # or dev_user if you set it
-    password="",            # "" for root on fresh XAMPP
+    port=3306,             
+    user="root",            
+    password="",            
     database="University",
     cursorclass=pymysql.cursors.DictCursor,
 )
